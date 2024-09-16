@@ -1,0 +1,1 @@
+Esta aplicación es un API de tareas que ha sido desarrollada siguiendo buenas prácticas de programación. Se han utilizado técnicas de testing para garantizar la calidad del código y la funcionalidad de la aplicación. El objetivo principal de esta API es permitir a los usuarios gestionar y organizar sus tareas de manera eficiente.
