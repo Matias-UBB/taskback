@@ -1,16 +1,15 @@
 import { CreateUserDto, LoginUserDto } from "../dto/userDto";
 import {User,IUser} from "../models/userModel";
-import { generateToken } from "../jwt/tokenService";
 import { AppError } from "../middleware/errorHandler";
+import { generateAccesToken, generateRefreshToken } from "../jwt/tokenService";
+import { TokenPayload } from "../jwt/tokenTypes";
 
 const createUser = async (userData: CreateUserDto) : Promise<IUser>=>{
-    const user = new User(userData);
-    const userExists = await User.findOne({
-        email:userData.email
-    });
+    const userExists= await User.findOne({email:userData.email});
     if(userExists){
         throw new AppError("User already exists",400);
     }
+    const user = new User(userData);
     const userSaved = await user.save();
     if(!userSaved){
         throw new AppError("User not saved",500);
@@ -33,7 +32,7 @@ const findUserById = async (id:string):Promise<IUser|null>=>{
     return user;
 };
 
-const loginUser = async (loginData: LoginUserDto): Promise<{token:string , email:string , name:string} | null> =>{
+const loginUser = async (loginData: LoginUserDto): Promise<{refreshToken:String, accessToken:String , email:string , name:string} | null> =>{
     const user = await User .findOne({email:loginData.email});
     if(!user){
         throw new AppError("Invalid credentials",404);
@@ -43,8 +42,9 @@ const loginUser = async (loginData: LoginUserDto): Promise<{token:string , email
         throw new AppError("Invalid credentials",401);
     }
 
-    const token = generateToken({userId:user.id,email:user.email});
-    return {token , email:user.email, name:user.name};
+   const accessToken = generateAccesToken({email:user.email,userId:user.id});
+   const refreshToken = generateRefreshToken({email:user.email,userId:user.id})
+  return {accessToken, refreshToken , email:user.email, name:user.name};
 
 };
 
