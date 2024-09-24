@@ -8,16 +8,12 @@ import * as projectService from "../service/projectService";
 
 
 const createTask = async (req: Request, res : Response, next:NextFunction):Promise<void>=>{
-    const createTaskDto = plainToClass(CreateTaskDto,req.body);
-    const errors = await validate(createTaskDto);
-    if (errors.length > 0) {
-        res.status(400).json(errors);
-        return;
-    }
+    
+    
 
     try {
+        const createTaskDto = plainToClass(CreateTaskDto,req.body);
         const task = await taskService.createTask(createTaskDto);
-
         res.status(201).json(task);
     } catch (error) {
         next(error);
