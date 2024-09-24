@@ -41,10 +41,15 @@ const updateProject = async (id: string, projectData: UpdateProjectDto):Promise<
     return project;
 };
 
-const deleteProject = async (id: string): Promise<IProject|null>=>{
+const deleteProject = async (id: string, userId:string): Promise<IProject|null>=>{
+
     const project = await Project.findByIdAndDelete(id);
     if(!project){
         throw new AppError("Error to delete project",404);
+    }
+
+    if(project.user.toString() !== userId){
+        throw new AppError("You are not allowed to delete this project",401);
     }
     return project;
 };
