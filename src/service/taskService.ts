@@ -14,8 +14,13 @@ const createTask =async (taskData:CreateTaskDto):Promise<ITasks>=>{
     if(taskExists){
         throw new AppError("Task already exists",400);
     }
+    const projectExists = await Task.findOne({
+        project:taskData.project
+    });
+    if(!projectExists){
+        throw new AppError("Project not exists",404);
+    }
     const taskSaved = await task.save();
-
     if(!taskSaved){
         throw new AppError("Task not saved",500);
     }
